@@ -1,0 +1,50 @@
+.folder-title {
+    background-color: #ffffff;
+    border: none;
+    color: #000000;
+    font-size: 14px;
+    padding: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-align:left;
+    border-bottom: 0.5px solid #a8a7a7;
+    font-weight:600;
+    margin:5px;  
+}
+
+.folder-title:hover {background-color: #012443; color:white;}
+
+.folder-dropdown.hidden {
+    display: none;
+  }
+
+.folder-dropdown li {
+white-space: nowrap; /* Add this line to prevent text wrapping */
+margin: 5px 0;
+}
+
+/* Edit Button Styles */
+.editBtn {
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    color: #333;
+    padding: 8px 12px;
+  }
+  
+/* Delete Button Styles */
+.deleteBtn {
+background-color: #ff0000;
+border: none;
+border-radius: 4px;
+color: #fff;
+padding: 8px 12px;
+}
+
+/* Button Icon Styles */
+button {
+display: inline-block;
+vertical-align: middle;
+margin-right: 6px;
+}
+input {width:auto;}

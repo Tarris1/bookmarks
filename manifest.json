@@ -1,0 +1,24 @@
+{
+    "name": "My Extension",
+    "version": "1.0",
+    "manifest_version": 3,
+    "action": {
+        "default_popup": "popup.html"
+      },
+      "web_accessible_resources": [
+        "styles.css"],
+    "description": "My first Chrome extension",
+    "permissions": [
+      "bookmarks"
+    ],
+    "content_scripts": [
+      {
+        "matches": ["<all_urls>"],
+        "js": ["main.js"],
+        "css": ["style.css"]
+      }
+    ],
+    "background": {
+        "service_worker": "background.js"
+      }
+  }
