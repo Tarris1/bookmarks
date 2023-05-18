@@ -45,16 +45,6 @@ const createBookmarkDropdowns = (bookmarks, parentElement) => {
             bookmarkLink.className = "linkRow"
             const editButton = createButton(li, item, "edit");
             const deleteButton = createButton(li, item, "delete")
-            /*const link = document.createElement("a");
-            link.href = item.url;
-            const faviconUrl = `${link.protocol}//${link.hostname}/favicon.ico`;
-            const image = new Image();
-            image.addEventListener("load", () => {
-                const faviconImg = document.createElement("img");
-                Object.assign(faviconImg, { src: faviconUrl, alt: "Favicon", width: 10, height: 12 });
-                //li.appendChild(faviconImg);
-            });
-        image.src = faviconUrl;*/
         li.appendChild(bookmarkLink);
         const containerDiv = document.createElement("div");
         containerDiv.draggable = true;
@@ -105,8 +95,7 @@ const deleteBookmarkItem = (li, item) => {
         const parentFolder = item.parent;
         if (parentFolder && parentFolder.children) {
         parentFolder.children = parentFolder.children.filter(child => child !== item);
-        }
-        li.remove();
+        } li.remove();
     });
   };
 
