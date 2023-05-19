@@ -3,10 +3,14 @@
     "version": "1.0",
     "manifest_version": 3,
     "action": {
-        "default_popup": "popup.html"
-      },
-      "web_accessible_resources": [
-        "styles.css"],
+      "default_popup": "popup.html"
+    },
+    "web_accessible_resources": [
+      {
+        "resources": ["styles.css"],
+        "matches": ["<all_urls>"]
+      }
+    ],
     "description": "My first Chrome extension",
     "permissions": [
       "bookmarks"
@@ -19,6 +23,7 @@
       }
     ],
     "background": {
-        "service_worker": "background.js"
-      }
+      "service_worker": "background.js"
+    }
   }
+  

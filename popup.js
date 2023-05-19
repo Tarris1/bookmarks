@@ -1,4 +1,4 @@
-const appendChildren = (parent, ...children) => {children.forEach(child => {parent.appendChild(child);});}
+const appendChildren = (parent, ...children) => {!children&&parent;children.forEach(child => {parent.appendChild(child);});}
 const createButton = (li, item, type) =>  {
     const icon = type==="edit"?'<i class="fas fa-pencil-alt button-icon"></i>':'<i class="fas fa-trash button-icon"></i>';
     const button = document.createElement("button");
@@ -12,9 +12,10 @@ const createButton = (li, item, type) =>  {
     return button;
     }
 
-const createBookmarkDropdowns = (bookmarks, parentElement) => {
-    const ul = document.createElement("ul");  
-    for (const item of bookmarks) {
+const createBookmarkDropdowns = (bookmarks, parentElement, searchQuery="", order="desc") => {
+    const ul = document.createElement("ul");
+    const sortedBookmarks = sortFunction(bookmarks, order);
+    for (const item of sortedBookmarks) {
         const li = document.createElement("li");
         if (item.hasOwnProperty("children")) {
             const folderTitle = document.createElement("button");
@@ -26,8 +27,8 @@ const createBookmarkDropdowns = (bookmarks, parentElement) => {
             li.appendChild(folderTitle);
             const folderDropdown = document.createElement("ul");
             folderDropdown.className = "folderDropdown";
-            folderDropdown.classList.add("folder-dropdown", "hidden"); // Set initial state to hidden
-            createBookmarkDropdowns(item.children, folderDropdown);
+            folderDropdown.classList.add("folder-dropdown"/*, "hidden"*/); // Set initial state to hidden
+            createBookmarkDropdowns(item.children, folderDropdown, searchQuery, order);
             li.appendChild(folderDropdown);
             folderTitle.addEventListener("click", () => {
                 folderTitle.classList.toggle("collapsed");
@@ -39,10 +40,15 @@ const createBookmarkDropdowns = (bookmarks, parentElement) => {
                 event.dataTransfer.effectAllowed = "move";
       });
         } else {
+            if (searchQuery && !item.title.toLowerCase().includes(searchQuery.toLowerCase())) {continue;}
             const bookmarkLink = document.createElement("a");
             bookmarkLink.textContent = item.title;
             bookmarkLink.href = item.url;
             bookmarkLink.className = "linkRow"
+            const dateAdded = document.createElement("a");
+            const date = new Date(item.dateAdded);
+            dateAdded.textContent = " (" + (date.getDate())+"/"+(date.getMonth()+1)+"-"+date.getFullYear() + ")";
+            bookmarkLink.appendChild(dateAdded)
             const editButton = createButton(li, item, "edit");
             const deleteButton = createButton(li, item, "delete")
         li.appendChild(bookmarkLink);
@@ -99,8 +105,37 @@ const deleteBookmarkItem = (li, item) => {
     });
   };
 
+const sortFunction = (bookmarks, direction) => {
+    const orderedBookmarks = [...bookmarks];
+    const order = direction === "desc";
+    orderedBookmarks.sort((a, b) => {
+        if (a.hasOwnProperty("children") && b.hasOwnProperty("children")) {
+          return (order ? b.dateGroupModified - a.dateGroupModified : a.dateGroupModified - b.dateGroupModified);
+        } else {return order ? b.dateAdded - a.dateAdded : a.dateAdded - b.dateAdded;}});
+    return orderedBookmarks
+}
+
+const getSortedBookmarks = (bookmarks, parentElement, searchInput) => {
+    const sortOrder = document.getElementById("sort-button");
+    sortOrder.addEventListener('click', () => {
+      sortOrder.textContent = sortOrder.textContent === "desc" ? "asc" : "desc";
+      parentElement.innerHTML = '';
+      createBookmarkDropdowns(bookmarks, parentElement, searchInput.value.trim(),sortOrder.textContent);
+    });
+  }
+
 chrome.bookmarks.getTree((bookmarkTreeNodes) => {
-    const bookmarksBar = bookmarkTreeNodes[0];
+    const bookmarksBar = bookmarkTreeNodes[0].children;
     const parentElement = document.getElementById("bookmarks-container");
-    createBookmarkDropdowns(bookmarksBar.children, parentElement);
+    const searchInput = document.getElementById('search-input');
+    getSortedBookmarks(bookmarksBar, parentElement, searchInput);
+    const sortOrder = document.getElementById('sort-button');
+    const order = sortOrder.textContent;
+    searchInput.addEventListener('input', () => {
+        const searchQuery = searchInput.value.trim();
+        parentElement.innerHTML = '';
+        createBookmarkDropdowns(bookmarksBar, parentElement, searchQuery);
+    });
+    createBookmarkDropdowns(bookmarksBar, parentElement, "",order);
 });
+  
